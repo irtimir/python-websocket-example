@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  app:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./src:/app/"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - APP_REDIS_HOST=redis
+
+  message-publisher:
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - "./src:/app/"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - APP_REDIS_HOST=redis
+    command: ["python", "message_publisher.py"]
